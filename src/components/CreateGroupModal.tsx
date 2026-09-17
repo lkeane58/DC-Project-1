@@ -1,19 +1,12 @@
 "use client";
 
 import { JHU_FALL_2026_COURSES } from "@/data/jhuFall2026Courses";
-import { generateGroupPasscode } from "@/lib/storage";
 import { PlatformType, StudentProfile, StudyGroup } from "@/types";
 import {
   Calendar,
   Clock,
-  Copy,
-  Globe,
-  Info,
-  KeyRound,
   Link as LinkIcon,
-  Lock,
   MapPin,
-  RefreshCw,
   Sparkles,
   Users,
   X,
@@ -70,9 +63,6 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
   const [title, setTitle] = useState("");
   const [section, setSection] = useState("01");
   const [instructor, setInstructor] = useState("");
-  const [isPrivate, setIsPrivate] = useState(false);
-  const [passcode, setPasscode] = useState("");
-  const [copiedPasscode, setCopiedPasscode] = useState(false);
 
   const [weeklyFrequency, setWeeklyFrequency] = useState<
     "Once a week" | "Twice a week" | "Three times a week" | "Bi-weekly"
@@ -111,13 +101,6 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
     }
   }, [selectedCourseCode]);
 
-  // Generate code when private setting is activated
-  useEffect(() => {
-    if (isPrivate && !passcode) {
-      setPasscode(generateGroupPasscode());
-    }
-  }, [isPrivate, passcode]);
-
   if (!isOpen) return null;
 
   const handleDayToggle = (day: string) => {
@@ -138,16 +121,6 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
     }
   };
 
-  const handleRegenerateCode = () => {
-    setPasscode(generateGroupPasscode());
-  };
-
-  const handleCopyCode = () => {
-    navigator.clipboard.writeText(passcode);
-    setCopiedPasscode(true);
-    setTimeout(() => setCopiedPasscode(false), 2000);
-  };
-
   const validate = () => {
     const newErrors: Record<string, string> = {};
     if (!title.trim()) newErrors.title = "Group title is required";
@@ -159,9 +132,6 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
     }
     if (meetingDays.length === 0) {
       newErrors.meetingDays = "Select at least one meeting day";
-    }
-    if (isPrivate && !passcode) {
-      newErrors.passcode = "Passcode is required for private groups";
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -182,8 +152,6 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
       courseTitle: course ? course.title : selectedCourseCode,
       section: section.trim() || "01",
       instructor: instructor.trim() || "Course Faculty",
-      isPrivate,
-      passcode: isPrivate ? passcode : undefined,
       meetingDays,
       meetingTime: `${startTime} - ${endTime}`,
       weeklyFrequency,
@@ -241,8 +209,8 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
             Create a New Study Group
           </h2>
           <p className="text-xs sm:text-sm text-slate-300 mt-1">
-            Connect with Hopkins peers taking your Fall 2026 courses. Protect
-            your channel link until students join.
+            Connect with Hopkins peers taking your Fall 2026 courses. Set up
+            your meeting schedule and preferred campus room.
           </p>
         </div>
 
@@ -324,109 +292,11 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
             </div>
           </div>
 
-          {/* Section 2: Privacy Setting & Code Generation */}
-          <div className="space-y-4 pt-3 border-t border-slate-200">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-amber-500"></span>
-              Group Privacy & Access Setting
-            </h3>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div
-                onClick={() => setIsPrivate(false)}
-                className={`cursor-pointer rounded-xl p-3.5 border transition-all flex items-start space-x-3 ${
-                  !isPrivate
-                    ? "border-emerald-500 bg-emerald-50/40 ring-1 ring-emerald-500/30"
-                    : "border-slate-200 hover:border-slate-300"
-                }`}
-              >
-                <Globe className="w-5 h-5 text-emerald-600 mt-0.5 shrink-0" />
-                <div>
-                  <div className="font-semibold text-slate-900 text-xs flex items-center gap-1.5">
-                    <span>Public Group</span>
-                    <span className="bg-emerald-100 text-emerald-800 text-[10px] px-1.5 py-0.2 rounded font-bold">
-                      Open
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
-                    Any Hopkins student can join with 1-click to reveal the
-                    communication link.
-                  </p>
-                </div>
-              </div>
-
-              <div
-                onClick={() => setIsPrivate(true)}
-                className={`cursor-pointer rounded-xl p-3.5 border transition-all flex items-start space-x-3 ${
-                  isPrivate
-                    ? "border-amber-500 bg-amber-50/40 ring-1 ring-amber-500/30"
-                    : "border-slate-200 hover:border-slate-300"
-                }`}
-              >
-                <Lock className="w-5 h-5 text-amber-600 mt-0.5 shrink-0" />
-                <div>
-                  <div className="font-semibold text-slate-900 text-xs flex items-center gap-1.5">
-                    <span>Private Group</span>
-                    <span className="bg-amber-100 text-amber-800 text-[10px] px-1.5 py-0.2 rounded font-bold">
-                      Passcode Protected
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
-                    Requires an auto-generated invite code to join and unlock
-                    the link.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Generated Passcode Box for Private Groups */}
-            {isPrivate && (
-              <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 animate-in fade-in duration-150">
-                <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-xs font-bold text-amber-900 flex items-center gap-1.5">
-                    <KeyRound className="w-4 h-4 text-amber-700" />
-                    Auto-Generated Private Join Code:
-                  </span>
-                  <div className="flex items-center space-x-1.5">
-                    <button
-                      type="button"
-                      onClick={handleRegenerateCode}
-                      className="p-1 text-amber-700 hover:text-amber-900 rounded hover:bg-amber-100"
-                      title="Generate new passcode"
-                    >
-                      <RefreshCw className="w-3.5 h-3.5" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleCopyCode}
-                      className="text-xs font-semibold text-amber-800 hover:text-amber-950 flex items-center space-x-1 bg-white border border-amber-300 px-2 py-0.5 rounded shadow-xs"
-                    >
-                      <Copy className="w-3 h-3" />
-                      <span>{copiedPasscode ? "Copied!" : "Copy Code"}</span>
-                    </button>
-                  </div>
-                </div>
-
-                <div className="flex items-center space-x-2 my-2">
-                  <span className="font-mono text-xl font-black tracking-wider bg-white px-4 py-1.5 rounded-lg border border-amber-300 text-amber-900 shadow-inner">
-                    {passcode}
-                  </span>
-                </div>
-
-                <p className="text-[11px] text-amber-800">
-                  <Info className="w-3 h-3 inline mr-1" />
-                  Share this code with specific classmates. Non-members cannot
-                  see your communication link without entering this code.
-                </p>
-              </div>
-            )}
-          </div>
-
-          {/* Section 3: Meeting Timings & Frequency */}
+          {/* Section 2: Meeting Timings & Room Location */}
           <div className="space-y-4 pt-3 border-t border-slate-200">
             <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-blue-500"></span>
-              Meeting Schedule & Location
+              Meeting Schedule & Meeting Room Location
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
