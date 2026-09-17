@@ -119,3 +119,4 @@ export function generateGroupPasscode(): string {
 }
 
 export const CAMPUS_ROOMS: CampusRoom[] = INITIAL_CAMPUS_ROOMS;
+

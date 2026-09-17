@@ -120,3 +120,4 @@ export const JoinPrivateModal: React.FC<JoinPrivateModalProps> = ({
     </div>
   );
 };
+

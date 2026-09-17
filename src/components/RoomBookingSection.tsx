@@ -413,3 +413,4 @@ export const RoomBookingSection: React.FC<RoomBookingSectionProps> = ({
     </div>
   );
 };
+

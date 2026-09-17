@@ -293,3 +293,4 @@ export const INITIAL_STUDY_GROUPS: StudyGroup[] = [
     createdAt: "2026-09-09T15:00:00Z",
   },
 ];
+

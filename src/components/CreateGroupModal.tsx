@@ -674,3 +674,4 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
     </div>
   );
 };
+

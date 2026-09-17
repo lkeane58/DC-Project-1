@@ -358,3 +358,4 @@ export const StudyGroupCard: React.FC<StudyGroupCardProps> = ({
     </div>
   );
 };
+

@@ -114,3 +114,4 @@ export function rankStudyGroups(
     .map((group) => calculateGroupMatch(student, group))
     .sort((a, b) => b.score - a.score);
 }
+

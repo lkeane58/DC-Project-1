@@ -237,3 +237,4 @@ export const CourseSelector: React.FC<CourseSelectorProps> = ({
     </div>
   );
 };
+
