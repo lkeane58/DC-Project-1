@@ -2,61 +2,35 @@
 
 import { CourseSelector } from "@/components/CourseSelector";
 import { CreateGroupModal } from "@/components/CreateGroupModal";
-import { JoinPrivateModal } from "@/components/JoinPrivateModal";
 import { Navbar } from "@/components/Navbar";
-import { RoomBookingSection } from "@/components/RoomBookingSection";
 import { StudentProfileModal } from "@/components/StudentProfileModal";
 import { StudyGroupCard } from "@/components/StudyGroupCard";
 import { rankStudyGroups } from "@/lib/matching";
-import {
-  getStoredBookings,
-  getStoredGroups,
-  getStoredProfile,
-  saveBookings,
-  saveGroups,
-  saveProfile,
-} from "@/lib/storage";
-import { RoomBooking, StudentProfile, StudyGroup } from "@/types";
-import {
-  AlertCircle,
-  BookOpen,
-  Calendar,
-  Compass,
-  Filter,
-  GraduationCap,
-  PlusCircle,
-  Search,
-  Sparkles,
-  Users,
-} from "lucide-react";
+import { getStoredGroups, getStoredProfile, saveGroups, saveProfile } from "@/lib/storage";
+import { StudentProfile, StudyGroup } from "@/types";
+import { AlertCircle, BookOpen, Calendar, Compass, Filter, GraduationCap, PlusCircle, Search, Sparkles, Users } from "lucide-react";
 import React, { useEffect, useMemo, useState } from "react";
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
-  const [activeTab, setActiveTab] = useState<
-    "match" | "explore" | "my-groups" | "rooms"
-  >("match");
+  const [activeTab, setActiveTab] = useState<"match" | "explore" | "my-groups">("match");
 
   // Main state
   const [student, setStudent] = useState<StudentProfile>(getStoredProfile());
   const [groups, setGroups] = useState<StudyGroup[]>(getStoredGroups());
-  const [bookings, setBookings] = useState<RoomBooking[]>(getStoredBookings());
 
   // Search & Filter state for Explore tab
   const [exploreSearch, setExploreSearch] = useState("");
-  const [privacyFilter, setPrivacyFilter] = useState<"all" | "public" | "private">("all");
 
   // Modals state
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [privateModalGroup, setPrivateModalGroup] = useState<StudyGroup | null>(null);
   const [notification, setNotification] = useState<string | null>(null);
 
   useEffect(() => {
     setMounted(true);
     setGroups(getStoredGroups());
     setStudent(getStoredProfile());
-    setBookings(getStoredBookings());
   }, []);
 
   const showNotification = (msg: string) => {
@@ -126,35 +100,6 @@ export default function Home() {
     );
   };
 
-  // Join a private group after verifying passcode
-  const handleJoinPrivateSuccess = (group: StudyGroup) => {
-    if (group.members.some((m) => m.email === student.email)) return;
-
-    const updatedMembers = [
-      ...group.members,
-      {
-        id: student.id,
-        name: student.name,
-        email: student.email,
-        jhed: student.jhed,
-        avatar:
-          "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=faces",
-        role: "member" as const,
-        joinedAt: new Date().toISOString(),
-      },
-    ];
-
-    const updatedGroups = groups.map((g) =>
-      g.id === group.id ? { ...g, members: updatedMembers } : g
-    );
-
-    setGroups(updatedGroups);
-    saveGroups(updatedGroups);
-    showNotification(
-      `Passcode verified! Joined "${group.title}" and unlocked the ${group.platformName} channel.`
-    );
-  };
-
   // Leave a study group
   const handleLeaveGroup = (groupId: string) => {
     const updatedGroups = groups.map((g) => {
@@ -166,7 +111,6 @@ export default function Home() {
         ),
       };
     });
-
     setGroups(updatedGroups);
     saveGroups(updatedGroups);
     showNotification("You have left the study group.");
@@ -182,20 +126,6 @@ export default function Home() {
     );
   };
 
-  // Room bookings handlers
-  const handleAddBooking = (newBooking: RoomBooking) => {
-    const updated = [newBooking, ...bookings];
-    setBookings(updated);
-    saveBookings(updated);
-  };
-
-  const handleCancelBooking = (bookingId: string) => {
-    const updated = bookings.filter((b) => b.id !== bookingId);
-    setBookings(updated);
-    saveBookings(updated);
-    showNotification("Room reservation cancelled.");
-  };
-
   // Groups student has joined
   const myGroups = useMemo(() => {
     return groups.filter((g) =>
@@ -203,17 +133,12 @@ export default function Home() {
     );
   }, [groups, student]);
 
-  // Bookings made by current student
-  const myBookings = useMemo(() => {
-    return bookings.filter((b) => b.bookedBy === student.email);
-  }, [bookings, student]);
-
   // Matched groups sorted by algorithm
   const rankedMatches = useMemo(() => {
     return rankStudyGroups(student, groups);
   }, [student, groups]);
 
-  // Filtered groups for the Explore tab
+  // Filtered groups for the Explore tab (public only)
   const filteredExploreGroups = useMemo(() => {
     return groups.filter((group) => {
       const matchesSearch =
@@ -222,17 +147,9 @@ export default function Home() {
         group.courseTitle.toLowerCase().includes(exploreSearch.toLowerCase()) ||
         group.instructor.toLowerCase().includes(exploreSearch.toLowerCase()) ||
         group.description.toLowerCase().includes(exploreSearch.toLowerCase());
-
-      const matchesPrivacy =
-        privacyFilter === "all"
-          ? true
-          : privacyFilter === "public"
-          ? !group.isPrivate
-          : group.isPrivate;
-
-      return matchesSearch && matchesPrivacy;
+      return matchesSearch;
     });
-  }, [groups, exploreSearch, privacyFilter]);
+  }, [groups, exploreSearch]);
 
   if (!mounted) return null;
 
@@ -251,7 +168,7 @@ export default function Home() {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         myGroupsCount={myGroups.length}
-        myBookingsCount={myBookings.length}
+        myBookingsCount={0}
         student={student}
         onOpenCreate={() => setIsCreateOpen(true)}
         onOpenProfile={() => setIsProfileOpen(true)}
@@ -259,12 +176,10 @@ export default function Home() {
 
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* ================================================================= */}
-        {/* TAB 1: SMART MATCH (CORE INTELLIGENT MATCHING) */}
-        {/* ================================================================= */}
+        {/* TAB 1: SMART MATCH */}
         {activeTab === "match" && (
           <div className="space-y-6">
-            {/* Course Selection Section (Fall 2026) */}
+            {/* Course Selection Section */}
             <CourseSelector
               selectedCourseCodes={student.enrolledCourseCodes}
               onToggleCourse={handleToggleCourse}
@@ -305,7 +220,6 @@ export default function Home() {
                   currentStudent={student}
                   matchResult={match}
                   onJoinPublic={handleJoinPublic}
-                  onJoinPrivateRequest={(g) => setPrivateModalGroup(g)}
                   onLeaveGroup={handleLeaveGroup}
                 />
               ))}
@@ -333,9 +247,7 @@ export default function Home() {
           </div>
         )}
 
-        {/* ================================================================= */}
         {/* TAB 2: EXPLORE / ALL STUDY GROUPS */}
-        {/* ================================================================= */}
         {activeTab === "explore" && (
           <div className="space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-slate-200">
@@ -349,7 +261,7 @@ export default function Home() {
                 </p>
               </div>
 
-              {/* Search & Privacy Filters */}
+              {/* Search */}
               <div className="flex flex-col sm:flex-row gap-2.5">
                 <div className="relative min-w-[240px]">
                   <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -360,39 +272,6 @@ export default function Home() {
                     onChange={(e) => setExploreSearch(e.target.value)}
                     className="w-full pl-9 pr-3 py-2 bg-white border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-jhu-heritage/20 focus:border-jhu-heritage"
                   />
-                </div>
-
-                <div className="flex items-center bg-white border border-slate-300 rounded-xl p-0.5 text-xs">
-                  <button
-                    onClick={() => setPrivacyFilter("all")}
-                    className={`px-3 py-1 rounded-lg font-medium transition-all ${
-                      privacyFilter === "all"
-                        ? "bg-jhu-heritage text-white shadow-xs"
-                        : "text-slate-600 hover:text-slate-900"
-                    }`}
-                  >
-                    All ({groups.length})
-                  </button>
-                  <button
-                    onClick={() => setPrivacyFilter("public")}
-                    className={`px-3 py-1 rounded-lg font-medium transition-all ${
-                      privacyFilter === "public"
-                        ? "bg-jhu-heritage text-white shadow-xs"
-                        : "text-slate-600 hover:text-slate-900"
-                    }`}
-                  >
-                    Public
-                  </button>
-                  <button
-                    onClick={() => setPrivacyFilter("private")}
-                    className={`px-3 py-1 rounded-lg font-medium transition-all ${
-                      privacyFilter === "private"
-                        ? "bg-jhu-heritage text-white shadow-xs"
-                        : "text-slate-600 hover:text-slate-900"
-                    }`}
-                  >
-                    Private
-                  </button>
                 </div>
               </div>
             </div>
@@ -410,7 +289,6 @@ export default function Home() {
                     currentStudent={student}
                     matchResult={matchResult}
                     onJoinPublic={handleJoinPublic}
-                    onJoinPrivateRequest={(g) => setPrivateModalGroup(g)}
                     onLeaveGroup={handleLeaveGroup}
                   />
                 );
@@ -431,9 +309,7 @@ export default function Home() {
           </div>
         )}
 
-        {/* ================================================================= */}
-        {/* TAB 3: MY GROUPS (ACTIVE MEMBERSHIPS & UNLOCKED LINKS) */}
-        {/* ================================================================= */}
+        {/* TAB 3: MY GROUPS */}
         {activeTab === "my-groups" && (
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-200">
@@ -460,17 +336,17 @@ export default function Home() {
               <div className="text-center py-16 bg-white rounded-2xl border border-slate-200 p-8">
                 <Users className="w-12 h-12 text-slate-300 mx-auto mb-3" />
                 <h3 className="text-base font-bold text-slate-800">
-                  You Haven&apos;t Joined Any Groups Yet
+                  You Haven\'t Joined Any Groups Yet
                 </h3>
                 <p className="text-xs text-slate-500 max-w-sm mx-auto mt-1 mb-4">
                   Check out the Smart Match tab to find groups that match your
-                  Fall 2026 courses, or browse all public and private listings.
+                  Fall 2026 courses, or browse all public listings.
                 </p>
                 <button
                   onClick={() => setActiveTab("match")}
                   className="inline-flex items-center space-x-1.5 bg-jhu-heritage text-white text-xs font-bold py-2.5 px-4 rounded-xl shadow-sm hover:bg-blue-900 transition-colors"
                 >
-                  <Compass className="w-4 h-4 text-jhu-spirit" />
+                  <Compass className="w-4 h-4 text-jhu-spir" />
                   <span>Go to Smart Match</span>
                 </button>
               </div>
@@ -487,7 +363,6 @@ export default function Home() {
                       currentStudent={student}
                       matchResult={matchResult}
                       onJoinPublic={handleJoinPublic}
-                      onJoinPrivateRequest={(g) => setPrivateModalGroup(g)}
                       onLeaveGroup={handleLeaveGroup}
                     />
                   );
@@ -496,26 +371,13 @@ export default function Home() {
             )}
           </div>
         )}
-
-        {/* ================================================================= */}
-        {/* TAB 4: CAMPUS ROOM BOOKINGS */}
-        {/* ================================================================= */}
-        {activeTab === "rooms" && (
-          <RoomBookingSection
-            currentStudent={student}
-            myGroups={myGroups}
-            bookings={bookings}
-            onAddBooking={handleAddBooking}
-            onCancelBooking={handleCancelBooking}
-          />
-        )}
       </main>
 
       {/* Footer */}
       <footer className="bg-slate-900 text-slate-400 py-8 border-t border-slate-800 text-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center space-x-2">
-            <GraduationCap className="w-5 h-5 text-jhu-spirit" />
+            <GraduationCap className="w-5 h-5 text-jhu-heritage" />
             <span className="font-semibold text-slate-200">
               Johns Hopkins University Study Group & Room Booking
             </span>
@@ -539,13 +401,6 @@ export default function Home() {
         onGroupCreated={handleGroupCreated}
       />
 
-      <JoinPrivateModal
-        group={privateModalGroup}
-        isOpen={!!privateModalGroup}
-        onClose={() => setPrivateModalGroup(null)}
-        onSuccessJoin={handleJoinPrivateSuccess}
-      />
-
       <StudentProfileModal
         isOpen={isProfileOpen}
         onClose={() => setIsProfileOpen(false)}
@@ -555,4 +410,3 @@ export default function Home() {
     </div>
   );
 }
-
