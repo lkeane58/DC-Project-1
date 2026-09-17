@@ -45,8 +45,6 @@ export interface StudyGroup {
   courseTitle: string;
   section: string;
   instructor: string;
-  isPrivate: boolean;
-  passcode?: string;
   meetingDays: string[];
   meetingTime: string; // e.g. "18:00 - 20:00"
   weeklyFrequency: "Once a week" | "Twice a week" | "Three times a week" | "Bi-weekly";
@@ -59,7 +57,6 @@ export interface StudyGroup {
   members: GroupMember[];
   createdBy: string;
   createdAt: string;
-  linkedRoomBookingId?: string;
 }
 
 export interface StudentProfile {
@@ -93,20 +90,5 @@ export interface CampusRoom {
   capacity: number;
   amenities: string[];
   imageUrl?: string;
-}
-
-export interface RoomBooking {
-  id: string;
-  roomId: string;
-  roomName: string;
-  building: string;
-  bookedBy: string;
-  groupId?: string;
-  groupTitle?: string;
-  date: string; // YYYY-MM-DD
-  startTime: string; // HH:MM
-  endTime: string; // HH:MM
-  purpose: string;
-  createdAt: string;
 }
 

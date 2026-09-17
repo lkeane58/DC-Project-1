@@ -7,16 +7,13 @@ import {
   Clock,
   Copy,
   ExternalLink,
-  KeyRound,
   Lock,
   LogOut,
   MapPin,
   MessageSquare,
-  ShieldAlert,
   Sparkles,
   Unlock,
   UserPlus,
-  Users,
 } from "lucide-react";
 import React, { useState } from "react";
 
@@ -25,7 +22,6 @@ interface StudyGroupCardProps {
   currentStudent: StudentProfile;
   matchResult?: MatchResult;
   onJoinPublic: (group: StudyGroup) => void;
-  onJoinPrivateRequest: (group: StudyGroup) => void;
   onLeaveGroup: (groupId: string) => void;
 }
 
@@ -34,11 +30,9 @@ export const StudyGroupCard: React.FC<StudyGroupCardProps> = ({
   currentStudent,
   matchResult,
   onJoinPublic,
-  onJoinPrivateRequest,
   onLeaveGroup,
 }) => {
   const [copiedLink, setCopiedLink] = useState(false);
-  const [copiedCode, setCopiedCode] = useState(false);
 
   const isMember = group.members.some(
     (m) => m.email === currentStudent.email || m.jhed === currentStudent.jhed
@@ -51,14 +45,6 @@ export const StudyGroupCard: React.FC<StudyGroupCardProps> = ({
     navigator.clipboard.writeText(group.communicationLink);
     setCopiedLink(true);
     setTimeout(() => setCopiedLink(false), 2000);
-  };
-
-  const handleCopyCode = () => {
-    if (group.passcode) {
-      navigator.clipboard.writeText(group.passcode);
-      setCopiedCode(true);
-      setTimeout(() => setCopiedCode(false), 2000);
-    }
   };
 
   const getScoreColor = (score: number) => {
@@ -85,18 +71,6 @@ export const StudyGroupCard: React.FC<StudyGroupCardProps> = ({
             <span className="font-mono text-xs font-bold px-2.5 py-1 rounded-md bg-jhu-heritage text-white shadow-xs">
               {group.courseCode}
             </span>
-
-            {group.isPrivate ? (
-              <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200">
-                <Lock className="w-3 h-3 text-amber-600" />
-                Private Group
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">
-                <Users className="w-3 h-3 text-emerald-600" />
-                Public Group
-              </span>
-            )}
 
             {isMember && (
               <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 border border-emerald-300">
@@ -275,24 +249,6 @@ export const StudyGroupCard: React.FC<StudyGroupCardProps> = ({
                   )}
                 </button>
               </div>
-
-              {/* Private Group Passcode Display for Creator/Members to Share */}
-              {group.isPrivate && group.passcode && (
-                <div className="mt-2.5 pt-2 border-t border-emerald-200/60 flex items-center justify-between text-[11px]">
-                  <span className="text-emerald-800 font-medium">
-                    Private Passcode:{" "}
-                    <span className="font-mono font-bold bg-white px-1.5 py-0.5 rounded border border-emerald-300">
-                      {group.passcode}
-                    </span>
-                  </span>
-                  <button
-                    onClick={handleCopyCode}
-                    className="text-emerald-700 hover:text-emerald-900 font-semibold underline text-[11px]"
-                  >
-                    {copiedCode ? "Copied!" : "Copy Code"}
-                  </button>
-                </div>
-              )}
             </div>
 
             {/* Leave Group Action */}
@@ -320,38 +276,21 @@ export const StudyGroupCard: React.FC<StudyGroupCardProps> = ({
               </p>
             </div>
 
-            {/* Join Action Buttons */}
-            {group.isPrivate ? (
-              <button
-                onClick={() => onJoinPrivateRequest(group)}
-                disabled={isFull}
-                className={`w-full flex items-center justify-center space-x-2 py-2.5 px-4 rounded-xl text-xs font-bold transition-all shadow-xs ${
-                  isFull
-                    ? "bg-slate-200 text-slate-400 cursor-not-allowed"
-                    : "bg-amber-600 hover:bg-amber-700 text-white active:scale-98"
-                }`}
-              >
-                <KeyRound className="w-3.5 h-3.5" />
-                <span>
-                  {isFull ? "Group is Full" : "Enter Passcode to Join"}
-                </span>
-              </button>
-            ) : (
-              <button
-                onClick={() => onJoinPublic(group)}
-                disabled={isFull}
-                className={`w-full flex items-center justify-center space-x-2 py-2.5 px-4 rounded-xl text-xs font-bold transition-all shadow-xs ${
-                  isFull
-                    ? "bg-slate-200 text-slate-400 cursor-not-allowed"
-                    : "bg-jhu-heritage hover:bg-blue-900 text-white active:scale-98"
-                }`}
-              >
-                <UserPlus className="w-3.5 h-3.5 text-jhu-spirit" />
-                <span>
-                  {isFull ? "Group is Full" : "Join Study Group (Reveal Link)"}
-                </span>
-              </button>
-            )}
+            {/* 1-Click Join Button */}
+            <button
+              onClick={() => onJoinPublic(group)}
+              disabled={isFull}
+              className={`w-full flex items-center justify-center space-x-2 py-2.5 px-4 rounded-xl text-xs font-bold transition-all shadow-xs ${
+                isFull
+                  ? "bg-slate-200 text-slate-400 cursor-not-allowed"
+                  : "bg-jhu-heritage hover:bg-blue-900 text-white active:scale-98"
+              }`}
+            >
+              <UserPlus className="w-3.5 h-3.5 text-jhu-spirit" />
+              <span>
+                {isFull ? "Group is Full" : "Join Study Group (Reveal Link)"}
+              </span>
+            </button>
           </div>
         )}
       </div>
