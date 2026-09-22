@@ -3,7 +3,6 @@
 import { StudentProfile } from "@/types";
 import {
   BookOpen,
-  Calendar,
   Compass,
   GraduationCap,
   PlusCircle,
@@ -14,10 +13,9 @@ import {
 import React from "react";
 
 interface NavbarProps {
-  activeTab: "match" | "explore" | "my-groups" | "rooms";
-  setActiveTab: (tab: "match" | "explore" | "my-groups" | "rooms") => void;
+  activeTab: "match" | "explore" | "my-groups";
+  setActiveTab: (tab: "match" | "explore" | "my-groups") => void;
   myGroupsCount: number;
-  myBookingsCount: number;
   student: StudentProfile;
   onOpenCreate: () => void;
   onOpenProfile: () => void;
@@ -27,7 +25,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   activeTab,
   setActiveTab,
   myGroupsCount,
-  myBookingsCount,
   student,
   onOpenCreate,
   onOpenProfile,
@@ -43,13 +40,12 @@ export const Navbar: React.FC<NavbarProps> = ({
             </span>
             <span className="text-white/40">|</span>
             <span className="text-jhu-spirit font-medium">
-              Academic Communities & Student Life
+              Student academic communities
             </span>
           </div>
           <div className="flex items-center space-x-3">
-            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span>
-              Fall 2026 Semester Active
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-white/10 text-white border border-white/20">
+              Fall 2026
             </span>
             <span className="text-slate-300 hidden sm:inline">
               Homewood Campus
@@ -74,7 +70,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </span>
               </div>
               <p className="text-[11px] text-slate-300 hidden sm:block">
-                Course Study Groups & Study Room Reservations
+              Course study groups
               </p>
             </div>
           </div>
@@ -122,22 +118,6 @@ export const Navbar: React.FC<NavbarProps> = ({
               )}
             </button>
 
-            <button
-              onClick={() => setActiveTab("rooms")}
-              className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors relative ${
-                activeTab === "rooms"
-                  ? "bg-white/15 text-white shadow-sm font-semibold border border-white/20"
-                  : "text-slate-200 hover:text-white hover:bg-white/10"
-              }`}
-            >
-              <Calendar className="w-4 h-4 text-jhu-spirit" />
-              <span>Campus Rooms</span>
-              {myBookingsCount > 0 && (
-                <span className="ml-1 px-1.5 py-0.2 bg-emerald-400 text-slate-900 text-[10px] font-bold rounded-full">
-                  {myBookingsCount}
-                </span>
-              )}
-            </button>
           </nav>
 
           {/* Right Actions: Create Group CTA & Profile */}
@@ -193,17 +173,8 @@ export const Navbar: React.FC<NavbarProps> = ({
           >
             My Groups ({myGroupsCount})
           </button>
-          <button
-            onClick={() => setActiveTab("rooms")}
-            className={`px-3 py-1.5 rounded-md whitespace-nowrap ${
-              activeTab === "rooms" ? "bg-white/20 font-bold" : "text-slate-300"
-            }`}
-          >
-            Rooms ({myBookingsCount})
-          </button>
         </div>
       </div>
     </header>
   );
 };
-

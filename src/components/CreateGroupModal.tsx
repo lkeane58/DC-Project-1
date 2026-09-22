@@ -39,18 +39,6 @@ const STUDY_GOAL_OPTIONS = [
   "Essay & Reading Discussions",
 ];
 
-const JHU_CAMPUS_LOCATIONS = [
-  "Brody Learning Commons (BLC) B-Level",
-  "Brody Learning Commons (BLC) 2nd Floor",
-  "Milton S. Eisenhower Library (MSE) M-Level",
-  "Malone Hall CS Collaboration 216",
-  "Hackerman Hall Innovation Lab",
-  "Clark Hall 110 Design Studio",
-  "Levering Hall Coffee Lounge",
-  "Gilman Hall Atrium",
-  "Online (Zoom / Discord)",
-];
-
 export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
   isOpen,
   onClose,
@@ -75,7 +63,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
   const [endTime, setEndTime] = useState("20:00");
 
   const [preferredLocation, setPreferredLocation] = useState(
-    JHU_CAMPUS_LOCATIONS[0]
+    ""
   );
   const [communicationLink, setCommunicationLink] = useState("");
   const [platformName, setPlatformName] = useState<PlatformType>("Discord");
@@ -124,6 +112,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
   const validate = () => {
     const newErrors: Record<string, string> = {};
     if (!title.trim()) newErrors.title = "Group title is required";
+    if (!preferredLocation.trim()) newErrors.preferredLocation = "Enter where your group will meet";
     if (!communicationLink.trim()) {
       newErrors.communicationLink = "Communication link is required";
     } else if (!/^https?:\/\//i.test(communicationLink.trim())) {
@@ -155,7 +144,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
       meetingDays,
       meetingTime: `${startTime} - ${endTime}`,
       weeklyFrequency,
-      preferredLocation,
+      preferredLocation: preferredLocation.trim(),
       communicationLink: communicationLink.trim(),
       platformName,
       description:
@@ -210,7 +199,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
           </h2>
           <p className="text-xs sm:text-sm text-slate-300 mt-1">
             Connect with Hopkins peers taking your Fall 2026 courses. Set up
-            your meeting schedule and preferred campus room.
+            your meeting schedule, location, and communication link.
           </p>
         </div>
 
@@ -296,7 +285,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
           <div className="space-y-4 pt-3 border-t border-slate-200">
             <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-blue-500"></span>
-              Meeting Schedule & Meeting Room Location
+              Meeting schedule & location
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
@@ -394,22 +383,22 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
               </div>
             </div>
 
-            {/* Campus Meeting Spot */}
+            {/* Creator-entered meeting location */}
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                Preferred Campus Study Spot
+                Meeting location *
               </label>
-              <select
+              <div className="relative">
+                <MapPin className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <input
+                type="text"
+                placeholder="e.g. Brody Learning Commons, Room 204"
                 value={preferredLocation}
                 onChange={(e) => setPreferredLocation(e.target.value)}
-                className="w-full px-3.5 py-2 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-jhu-heritage/20 focus:border-jhu-heritage"
-              >
-                {JHU_CAMPUS_LOCATIONS.map((loc) => (
-                  <option key={loc} value={loc}>
-                    {loc}
-                  </option>
-                ))}
-              </select>
+                className={`w-full pl-10 pr-3.5 py-2 bg-white border rounded-xl text-sm focus:ring-2 focus:ring-jhu-heritage/20 focus:border-jhu-heritage ${errors.preferredLocation ? "border-rose-400 bg-rose-50/30" : "border-slate-300"}`}
+                />
+              </div>
+              {errors.preferredLocation && <p className="text-[11px] text-rose-500 mt-1">{errors.preferredLocation}</p>}
             </div>
           </div>
 
@@ -544,4 +533,3 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
     </div>
   );
 };
-

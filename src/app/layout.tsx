@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "JHU Study Groups & Room Booking | Fall 2026",
+  title: "Hopkins Study | Fall 2026",
   description:
     "Official Johns Hopkins University study group matching and campus room reservation platform for Fall 2026 semester.",
 };
@@ -23,4 +23,3 @@ export default function RootLayout({
     </html>
   );
 }
-

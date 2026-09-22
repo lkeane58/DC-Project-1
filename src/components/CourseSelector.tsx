@@ -1,7 +1,6 @@
 "use client";
 
 import { JHU_FALL_2026_COURSES } from "@/data/jhuFall2026Courses";
-import { JHUCourse } from "@/types";
 import { BookOpen, Check, Filter, Search, Sparkles, X } from "lucide-react";
 import React, { useMemo, useState } from "react";
 
@@ -19,6 +18,7 @@ export const CourseSelector: React.FC<CourseSelectorProps> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [departmentFilter, setDepartmentFilter] = useState("All");
+  const [visibleCount, setVisibleCount] = useState(48);
 
   const departments = useMemo(() => {
     const deps = new Set(JHU_FALL_2026_COURSES.map((c) => c.department));
@@ -42,6 +42,11 @@ export const CourseSelector: React.FC<CourseSelectorProps> = ({
     });
   }, [searchQuery, departmentFilter]);
 
+  const visibleCourses = useMemo(
+    () => filteredCourses.slice(0, visibleCount),
+    [filteredCourses, visibleCount]
+  );
+
   const selectedCourses = useMemo(() => {
     return JHU_FALL_2026_COURSES.filter((c) =>
       selectedCourseCodes.includes(c.code)
@@ -62,10 +67,9 @@ export const CourseSelector: React.FC<CourseSelectorProps> = ({
               Select Your Fall 2026 Courses
             </h2>
             <p className="text-slate-300 text-sm mt-1 max-w-2xl">
-              Choose the courses you are taking this Fall 2026 semester. Our
-              matching algorithm will cross-reference existing study groups,
-              sections, instructors, and meeting slots to find your ideal study
-              partners.
+              Search the complete published JHU 2026–27 catalogue and add the
+              courses you plan to take. SIS remains the authority for live
+              Fall section availability.
             </p>
           </div>
 
@@ -132,7 +136,7 @@ export const CourseSelector: React.FC<CourseSelectorProps> = ({
               type="text"
               placeholder="Search Fall 2026 courses by code (e.g. EN.500.113, EN.601.226), title, or instructor..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => { setSearchQuery(e.target.value); setVisibleCount(48); }}
               className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-jhu-heritage/20 focus:border-jhu-heritage transition-all shadow-sm"
             />
             {searchQuery && (
@@ -149,7 +153,7 @@ export const CourseSelector: React.FC<CourseSelectorProps> = ({
             <Filter className="w-4 h-4 text-slate-500 hidden sm:inline" />
             <select
               value={departmentFilter}
-              onChange={(e) => setDepartmentFilter(e.target.value)}
+              onChange={(e) => { setDepartmentFilter(e.target.value); setVisibleCount(48); }}
               className="px-3 py-2.5 bg-white border border-slate-300 rounded-lg text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-jhu-heritage/20 focus:border-jhu-heritage transition-all shadow-sm"
             >
               {departments.map((dept) => (
@@ -165,7 +169,7 @@ export const CourseSelector: React.FC<CourseSelectorProps> = ({
       {/* Grid of Courses */}
       <div className="p-5 max-h-[420px] overflow-y-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
-          {filteredCourses.map((course) => {
+          {visibleCourses.map((course) => {
             const isSelected = selectedCourseCodes.includes(course.code);
             return (
               <div
@@ -210,11 +214,10 @@ export const CourseSelector: React.FC<CourseSelectorProps> = ({
 
                 <div className="pt-2 border-t border-slate-100 text-[11px] text-slate-600 flex items-center justify-between">
                   <span className="text-slate-500">
-                    {course.sections.length}{" "}
-                    {course.sections.length === 1 ? "Section" : "Sections"}
+                    Catalogue listing
                   </span>
                   <span className="font-medium text-slate-700 truncate max-w-[140px]">
-                    Prof. {course.sections[0]?.instructor.split(" ").pop()}
+                    {course.level}
                   </span>
                 </div>
               </div>
@@ -233,8 +236,19 @@ export const CourseSelector: React.FC<CourseSelectorProps> = ({
             </p>
           </div>
         )}
+
+        {visibleCourses.length < filteredCourses.length && (
+          <div className="pt-5 text-center">
+            <button
+              type="button"
+              onClick={() => setVisibleCount((count) => count + 48)}
+              className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-xs font-semibold text-jhu-heritage hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-jhu-heritage/30"
+            >
+              Show 48 more of {filteredCourses.length.toLocaleString()} courses
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
 };
-

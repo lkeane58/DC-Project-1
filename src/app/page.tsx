@@ -8,7 +8,7 @@ import { StudyGroupCard } from "@/components/StudyGroupCard";
 import { rankStudyGroups } from "@/lib/matching";
 import { getStoredGroups, getStoredProfile, saveGroups, saveProfile } from "@/lib/storage";
 import { StudentProfile, StudyGroup } from "@/types";
-import { AlertCircle, BookOpen, Calendar, Compass, Filter, GraduationCap, PlusCircle, Search, Sparkles, Users } from "lucide-react";
+import { BookOpen, Compass, GraduationCap, PlusCircle, Search, Sparkles, Users } from "lucide-react";
 import React, { useEffect, useMemo, useState } from "react";
 
 export default function Home() {
@@ -168,7 +168,6 @@ export default function Home() {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         myGroupsCount={myGroups.length}
-        myBookingsCount={0}
         student={student}
         onOpenCreate={() => setIsCreateOpen(true)}
         onOpenProfile={() => setIsProfileOpen(true)}
@@ -229,11 +228,11 @@ export default function Home() {
               <div className="text-center py-16 bg-white rounded-2xl border border-slate-200 p-8">
                 <Users className="w-12 h-12 text-slate-300 mx-auto mb-3" />
                 <h3 className="text-base font-bold text-slate-800">
-                  No Study Groups Found
+                  No groups have been created yet
                 </h3>
                 <p className="text-xs text-slate-500 max-w-md mx-auto mt-1 mb-4">
-                  Be the pioneer for your class! Create the very first study
-                  group for your Fall 2026 courses and invite your classmates.
+                  Start the first group for one of your courses. Joining becomes
+                  available as soon as students publish groups.
                 </p>
                 <button
                   onClick={() => setIsCreateOpen(true)}
@@ -256,8 +255,7 @@ export default function Home() {
                   All JHU Fall 2026 Study Groups
                 </h2>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  Browse all active student cohorts across the Whiting School
-                  and Krieger School.
+                  Browse student-created groups across the Fall 2026 catalogue.
                 </p>
               </div>
 
@@ -299,10 +297,10 @@ export default function Home() {
               <div className="text-center py-16 bg-white rounded-2xl border border-slate-200">
                 <BookOpen className="w-10 h-10 text-slate-300 mx-auto mb-2" />
                 <p className="text-slate-700 font-semibold text-sm">
-                  No groups match your search criteria.
+                  {groups.length === 0 ? "No study groups yet." : "No groups match your search criteria."}
                 </p>
                 <p className="text-slate-400 text-xs mt-1">
-                  Try clearing your search term or adjusting filters.
+                  {groups.length === 0 ? "Create the first group to help classmates find one another." : "Try clearing your search term."}
                 </p>
               </div>
             )}
@@ -336,18 +334,18 @@ export default function Home() {
               <div className="text-center py-16 bg-white rounded-2xl border border-slate-200 p-8">
                 <Users className="w-12 h-12 text-slate-300 mx-auto mb-3" />
                 <h3 className="text-base font-bold text-slate-800">
-                  You Haven\'t Joined Any Groups Yet
+                  You have not joined a group yet
                 </h3>
                 <p className="text-xs text-slate-500 max-w-sm mx-auto mt-1 mb-4">
-                  Check out the Smart Match tab to find groups that match your
-                  Fall 2026 courses, or browse all public listings.
+                  Create a group for your course, or browse groups once fellow
+                  students begin publishing them.
                 </p>
                 <button
                   onClick={() => setActiveTab("match")}
                   className="inline-flex items-center space-x-1.5 bg-jhu-heritage text-white text-xs font-bold py-2.5 px-4 rounded-xl shadow-sm hover:bg-blue-900 transition-colors"
                 >
                   <Compass className="w-4 h-4 text-jhu-spir" />
-                  <span>Go to Smart Match</span>
+                  <span>Browse groups</span>
                 </button>
               </div>
             ) : (
@@ -379,7 +377,7 @@ export default function Home() {
           <div className="flex items-center space-x-2">
             <GraduationCap className="w-5 h-5 text-jhu-heritage" />
             <span className="font-semibold text-slate-200">
-              Johns Hopkins University Study Group & Room Booking
+              Hopkins Study
             </span>
             <span className="text-slate-600">|</span>
             <span>Fall 2026 Term</span>
@@ -387,7 +385,7 @@ export default function Home() {
 
           <div className="text-slate-400 text-center sm:text-right">
             <span>
-              Connected to JHU Public Course Catalog (Fall 2026) & Brody Learning Commons
+              Course catalogue sourced from the JHU 2026–27 Academic Catalogue
             </span>
           </div>
         </div>
