@@ -1,6 +1,6 @@
 # JHU Study Group & Room Booking App (Fall 2026)
 
-A modern, full-stack web application designed for students at **Johns Hopkins University** to discover, match, create, and join study groups and reserve campus study rooms for the **Fall 2026 semester**.
+A student-facing Johns Hopkins application for creating, discovering, and joining Fall 2026 study groups.
 
 ---
 
@@ -25,7 +25,6 @@ A modern, full-stack web application designed for students at **Johns Hopkins Un
 * Tie groups directly to Fall 2026 courses with auto-populated section and instructor data.
 * **Public vs Private Settings**:
   * **Public**: Open 1-click join for any Hopkins student.
-  * **Private**: Automatically generates a unique, cryptographically random 8-character passcode (e.g., `JHU-7M9X`) to share with friends and classmates.
 * **Timings**: Frequency (`Twice a week`, `Once a week`), meeting days, and meeting time windows.
 * **Meeting Locations**: Pre-configured with Homewood campus landmarks (Brody Learning Commons, MSE Library, Malone Hall, Hackerman Hall, etc.) or Online.
 * **Capacity & Goals**: Configurable seat caps (3–12 students) and study objectives.
@@ -33,10 +32,10 @@ A modern, full-stack web application designed for students at **Johns Hopkins Un
 ### 4. Privacy-Gated Communication Link (Core Security Requirement)
 * **Before Joining**: Students can inspect course details, instructor, section, schedule, location, member count, and description. The communication link is strictly masked:
   > *🔒 Member-Only Communication Channel — Join this study group to reveal the Discord / GroupMe / WhatsApp invite link.*
-* **After Joining**: Immediate access to the direct invite link with 1-click launch and copy capabilities. For private groups, students must submit the valid passcode to join and unlock the link.
+* **After Joining**: Members can access the creator-provided communication link with one-click launch and copy support.
 
 ### 5. Campus Study Room Booking Integration
-* Live reservations for group study rooms at **Brody Learning Commons (BLC)**, **Milton S. Eisenhower Library (MSE)**, **Malone Hall**, and **Hackerman Hall**.
+* Group creators enter the real meeting location in free-form text, such as a building and room number.
 * Filter by building, floor, capacity, and amenities (Whiteboard, 4K Display, Outlets).
 * **Double-Booking Prevention**: Automated conflict detection algorithm ensuring no overlapping reservations for the same room and time slot.
 * Direct integration to link a room reservation with any of the student's active study groups.

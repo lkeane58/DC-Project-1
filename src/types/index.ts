@@ -11,7 +11,7 @@ export interface JHUCourse {
   code: string;
   title: string;
   department: string;
-  school: "Whiting School of Engineering" | "Krieger School of Arts and Sciences" | "Carey Business School" | "School of Education";
+  school: string;
   term: "Fall 2026";
   credits: number;
   sections: CourseSection[];
@@ -80,15 +80,5 @@ export interface MatchResult {
   sectionMatch: boolean;
   scheduleOverlap: boolean;
   styleOverlap: boolean;
-}
-
-export interface CampusRoom {
-  id: string;
-  name: string;
-  building: "Brody Learning Commons" | "Milton S. Eisenhower Library" | "Malone Hall" | "Hackerman Hall" | "Levering Hall";
-  floor: string;
-  capacity: number;
-  amenities: string[];
-  imageUrl?: string;
 }
 

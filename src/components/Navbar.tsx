@@ -1,209 +1,77 @@
 "use client";
 
 import { StudentProfile } from "@/types";
-import {
-  BookOpen,
-  Calendar,
-  Compass,
-  GraduationCap,
-  PlusCircle,
-  ShieldCheck,
-  User,
-  Users,
-} from "lucide-react";
+import { BookOpen, Compass, GraduationCap, Plus, Users } from "lucide-react";
 import React from "react";
 
 interface NavbarProps {
-  activeTab: "match" | "explore" | "my-groups" | "rooms";
-  setActiveTab: (tab: "match" | "explore" | "my-groups" | "rooms") => void;
+  activeTab: "match" | "explore" | "my-groups";
+  setActiveTab: (tab: "match" | "explore" | "my-groups") => void;
   myGroupsCount: number;
-  myBookingsCount: number;
   student: StudentProfile;
   onOpenCreate: () => void;
   onOpenProfile: () => void;
 }
 
+const navigation = [
+  { id: "match" as const, label: "My courses", icon: Compass },
+  { id: "explore" as const, label: "Discover groups", icon: BookOpen },
+  { id: "my-groups" as const, label: "My groups", icon: Users },
+];
+
 export const Navbar: React.FC<NavbarProps> = ({
   activeTab,
   setActiveTab,
   myGroupsCount,
-  myBookingsCount,
   student,
   onOpenCreate,
   onOpenProfile,
-}) => {
-  return (
-    <header className="sticky top-0 z-40 bg-jhu-heritage text-white border-b border-jhu-dark/50 shadow-md">
-      {/* Top University Branding Bar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between py-2 border-b border-white/10 text-xs text-slate-200">
-          <div className="flex items-center space-x-2">
-            <span className="font-serif tracking-widest font-semibold text-white uppercase text-[11px]">
-              Johns Hopkins University
-            </span>
-            <span className="text-white/40">|</span>
-            <span className="text-jhu-spirit font-medium">
-              Academic Communities & Student Life
-            </span>
-          </div>
-          <div className="flex items-center space-x-3">
-            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span>
-              Fall 2026 Semester Active
-            </span>
-            <span className="text-slate-300 hidden sm:inline">
-              Homewood Campus
-            </span>
-          </div>
-        </div>
+}) => (
+  <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/95 backdrop-blur">
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="flex h-16 items-center justify-between gap-4">
+        <button onClick={() => setActiveTab("match")} className="flex shrink-0 items-center gap-2.5 text-left" aria-label="Go to My courses">
+          <span className="grid h-9 w-9 place-items-center rounded-xl bg-jhu-heritage text-white shadow-sm">
+            <GraduationCap className="h-5 w-5" aria-hidden="true" />
+          </span>
+          <span className="hidden sm:block">
+            <span className="block text-[10px] font-semibold uppercase tracking-[0.16em] text-jhu-heritage">Johns Hopkins University</span>
+            <span className="block text-base font-bold tracking-tight text-slate-950">Hopkins Study</span>
+          </span>
+        </button>
 
-        {/* Main Nav Bar */}
-        <div className="flex items-center justify-between h-16">
-          {/* Logo / App Name */}
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-jhu-spirit to-blue-600 flex items-center justify-center text-white shadow-inner font-bold text-lg">
-              <GraduationCap className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <div className="flex items-center space-x-2">
-                <span className="font-bold text-lg sm:text-xl tracking-tight text-white">
-                  Hopkins<span className="text-jhu-spirit">Study</span>
-                </span>
-                <span className="bg-jhu-spirit/20 text-jhu-spirit border border-jhu-spirit/30 text-[10px] uppercase font-bold px-1.5 py-0.5 rounded">
-                  Fall &apos;26
-                </span>
-              </div>
-              <p className="text-[11px] text-slate-300 hidden sm:block">
-                Course Study Groups & Study Room Reservations
-              </p>
-            </div>
-          </div>
-
-          {/* Navigation Links */}
-          <nav className="hidden md:flex items-center space-x-1">
+        <nav className="hidden items-center gap-1 rounded-xl bg-slate-100 p-1 md:flex" aria-label="Primary navigation">
+          {navigation.map(({ id, label, icon: Icon }) => (
             <button
-              onClick={() => setActiveTab("match")}
-              className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                activeTab === "match"
-                  ? "bg-white/15 text-white shadow-sm font-semibold border border-white/20"
-                  : "text-slate-200 hover:text-white hover:bg-white/10"
-              }`}
+              key={id}
+              onClick={() => setActiveTab(id)}
+              className={`inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold transition ${activeTab === id ? "bg-white text-slate-950 shadow-sm" : "text-slate-600 hover:text-slate-950"}`}
             >
-              <Compass className="w-4 h-4 text-jhu-spirit" />
-              <span>Smart Match</span>
+              <Icon className="h-4 w-4" aria-hidden="true" />
+              {label}
+              {id === "my-groups" && myGroupsCount > 0 && <span className="rounded-full bg-jhu-heritage px-1.5 py-px text-[10px] text-white">{myGroupsCount}</span>}
             </button>
+          ))}
+        </nav>
 
-            <button
-              onClick={() => setActiveTab("explore")}
-              className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                activeTab === "explore"
-                  ? "bg-white/15 text-white shadow-sm font-semibold border border-white/20"
-                  : "text-slate-200 hover:text-white hover:bg-white/10"
-              }`}
-            >
-              <BookOpen className="w-4 h-4 text-jhu-spirit" />
-              <span>Browse All Groups</span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab("my-groups")}
-              className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors relative ${
-                activeTab === "my-groups"
-                  ? "bg-white/15 text-white shadow-sm font-semibold border border-white/20"
-                  : "text-slate-200 hover:text-white hover:bg-white/10"
-              }`}
-            >
-              <Users className="w-4 h-4 text-jhu-spirit" />
-              <span>My Groups</span>
-              {myGroupsCount > 0 && (
-                <span className="ml-1 px-1.5 py-0.2 bg-jhu-spirit text-jhu-dark text-[10px] font-bold rounded-full">
-                  {myGroupsCount}
-                </span>
-              )}
-            </button>
-
-            <button
-              onClick={() => setActiveTab("rooms")}
-              className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors relative ${
-                activeTab === "rooms"
-                  ? "bg-white/15 text-white shadow-sm font-semibold border border-white/20"
-                  : "text-slate-200 hover:text-white hover:bg-white/10"
-              }`}
-            >
-              <Calendar className="w-4 h-4 text-jhu-spirit" />
-              <span>Campus Rooms</span>
-              {myBookingsCount > 0 && (
-                <span className="ml-1 px-1.5 py-0.2 bg-emerald-400 text-slate-900 text-[10px] font-bold rounded-full">
-                  {myBookingsCount}
-                </span>
-              )}
-            </button>
-          </nav>
-
-          {/* Right Actions: Create Group CTA & Profile */}
-          <div className="flex items-center space-x-3">
-            <button
-              onClick={onOpenCreate}
-              className="flex items-center space-x-1.5 bg-gradient-to-r from-jhu-spirit to-sky-400 hover:from-sky-400 hover:to-sky-300 text-jhu-dark font-semibold px-3.5 py-2 rounded-lg text-sm shadow-md transition-all hover:shadow-lg active:scale-95"
-            >
-              <PlusCircle className="w-4 h-4 text-jhu-dark" />
-              <span className="hidden sm:inline">Create Group</span>
-              <span className="sm:hidden">Create</span>
-            </button>
-
-            <button
-              onClick={onOpenProfile}
-              className="flex items-center space-x-2 bg-white/10 hover:bg-white/20 border border-white/15 px-2.5 py-1.5 rounded-lg text-xs text-white transition-colors text-left"
-              title="Click to switch student profile / course schedule"
-            >
-              <div className="w-7 h-7 rounded-full bg-jhu-spirit text-jhu-dark flex items-center justify-center font-bold text-xs">
-                {student.name.charAt(0)}
-              </div>
-              <div className="hidden lg:block">
-                <p className="font-semibold leading-tight">{student.name}</p>
-                <p className="text-[10px] text-jhu-spirit">{student.jhed}@jhu.edu</p>
-              </div>
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile Tab Bar */}
-        <div className="flex md:hidden border-t border-white/10 py-2 space-x-1 overflow-x-auto text-xs">
-          <button
-            onClick={() => setActiveTab("match")}
-            className={`px-3 py-1.5 rounded-md whitespace-nowrap ${
-              activeTab === "match" ? "bg-white/20 font-bold" : "text-slate-300"
-            }`}
-          >
-            Smart Match
+        <div className="flex items-center gap-2">
+          <button onClick={onOpenCreate} className="inline-flex items-center gap-1.5 rounded-xl bg-jhu-heritage px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-jhu-dark">
+            <Plus className="h-4 w-4" aria-hidden="true" />
+            <span className="hidden sm:inline">Create group</span>
+            <span className="sm:hidden">Create</span>
           </button>
-          <button
-            onClick={() => setActiveTab("explore")}
-            className={`px-3 py-1.5 rounded-md whitespace-nowrap ${
-              activeTab === "explore" ? "bg-white/20 font-bold" : "text-slate-300"
-            }`}
-          >
-            Browse All
-          </button>
-          <button
-            onClick={() => setActiveTab("my-groups")}
-            className={`px-3 py-1.5 rounded-md whitespace-nowrap ${
-              activeTab === "my-groups" ? "bg-white/20 font-bold" : "text-slate-300"
-            }`}
-          >
-            My Groups ({myGroupsCount})
-          </button>
-          <button
-            onClick={() => setActiveTab("rooms")}
-            className={`px-3 py-1.5 rounded-md whitespace-nowrap ${
-              activeTab === "rooms" ? "bg-white/20 font-bold" : "text-slate-300"
-            }`}
-          >
-            Rooms ({myBookingsCount})
+          <button onClick={onOpenProfile} className="grid h-9 w-9 place-items-center rounded-full border border-slate-300 bg-slate-50 text-sm font-bold text-slate-700 transition hover:border-slate-400 hover:bg-white" aria-label="Edit your profile" title="Edit profile">
+            {student.name.charAt(0).toUpperCase()}
           </button>
         </div>
       </div>
-    </header>
-  );
-};
-
+      <nav className="-mx-1 flex gap-1 overflow-x-auto pb-2 md:hidden" aria-label="Mobile navigation">
+        {navigation.map(({ id, label, icon: Icon }) => (
+          <button key={id} onClick={() => setActiveTab(id)} className={`inline-flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold ${activeTab === id ? "bg-slate-900 text-white" : "text-slate-600"}`}>
+            <Icon className="h-3.5 w-3.5" aria-hidden="true" />{label}
+          </button>
+        ))}
+      </nav>
+    </div>
+  </header>
+);
