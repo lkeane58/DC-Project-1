@@ -4,13 +4,14 @@
 
 @layer base {
   :root {
-    --background: 210 40% 98%;
+    --background: 210 20% 98%;
     --foreground: 222 47% 11%;
   }
 
   body {
-    @apply bg-slate-50 text-slate-900 antialiased selection:bg-jhu-spirit selection:text-jhu-dark;
+    @apply bg-slate-50 text-slate-900 antialiased selection:bg-blue-200 selection:text-slate-950;
     font-feature-settings: "rlig" 1, "calt" 1;
+    text-rendering: optimizeLegibility;
   }
 
   button, input, select, textarea {
@@ -19,6 +20,15 @@
 
   button:disabled {
     @apply cursor-not-allowed opacity-60;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
   }
 }
 

@@ -4,7 +4,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Hopkins Study | Fall 2026",
   description:
-    "Official Johns Hopkins University study group matching and campus room reservation platform for Fall 2026 semester.",
+    "A focused study-group discovery and creation space for Johns Hopkins students in Fall 2026.",
 };
 
 export default function RootLayout({
