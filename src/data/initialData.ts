@@ -71,8 +71,6 @@ export const INITIAL_STUDY_GROUPS: StudyGroup[] = [
     meetingTime: "18:00 - 20:00",
     weeklyFrequency: "Twice a week",
     preferredLocation: "Brody Learning Commons (BLC) B-Level",
-    communicationLink: "https://discord.gg/jhu-gateway-python-2026",
-    platformName: "Discord",
     description:
       "We tackle weekly coding problem sets together, conduct live peer code reviews, and prepare for midterms with Python practice problems.",
     studyGoals: ["Weekly Problem Sets", "Midterm & Final Prep", "Project Collaboration"],
@@ -120,8 +118,6 @@ export const INITIAL_STUDY_GROUPS: StudyGroup[] = [
     meetingTime: "19:00 - 21:00",
     weeklyFrequency: "Twice a week",
     preferredLocation: "Malone Hall CS Collaboration 216",
-    communicationLink: "https://discord.gg/froehlich-datastruct-private",
-    platformName: "Discord",
     description:
       "Intense focus on Java data structures implementation, pointer debugging, asymptotic proofs, and memory leak analysis. Strict work ethic!",
     studyGoals: ["Weekly Problem Sets", "Midterm & Final Prep", "Concept Review"],
@@ -160,8 +156,6 @@ export const INITIAL_STUDY_GROUPS: StudyGroup[] = [
     meetingTime: "17:00 - 19:00",
     weeklyFrequency: "Twice a week",
     preferredLocation: "Brody Learning Commons 2nd Floor",
-    communicationLink: "https://groupme.com/join_group/99824102/jhu-calc2-brown",
-    platformName: "GroupMe",
     description:
       "Working through series convergence tests, integration by parts, Taylor polynomials, and past exam reviews before Professor Brown's quizzes.",
     studyGoals: ["Weekly Problem Sets", "Midterm & Final Prep"],
@@ -200,8 +194,6 @@ export const INITIAL_STUDY_GROUPS: StudyGroup[] = [
     meetingTime: "19:30 - 21:30",
     weeklyFrequency: "Once a week",
     preferredLocation: "Bloomberg Hall 2nd Floor Lounge",
-    communicationLink: "https://chat.whatsapp.com/INVITE_JHU_PHYS1_FALL26",
-    platformName: "WhatsApp",
     description:
       "Collaborative mechanics problem sessions, free-body diagram walkthroughs, and lab analysis. Bring your notebooks and calculators!",
     studyGoals: ["Weekly Problem Sets", "Concept Review"],
@@ -231,8 +223,6 @@ export const INITIAL_STUDY_GROUPS: StudyGroup[] = [
     meetingTime: "16:30 - 18:30",
     weeklyFrequency: "Once a week",
     preferredLocation: "Levering Hall Coffee Shop Lounge",
-    communicationLink: "https://join.slack.com/t/jhu-fys-truth/shared_invite/zt-2026fall",
-    platformName: "Slack",
     description:
       "Discussing seminar readings, preparing our debate papers, and formulating thesis arguments on informational asymmetry and market opacity.",
     studyGoals: ["Concept Review", "Project Collaboration"],
@@ -262,8 +252,6 @@ export const INITIAL_STUDY_GROUPS: StudyGroup[] = [
     meetingTime: "17:00 - 18:30",
     weeklyFrequency: "Twice a week",
     preferredLocation: "Clark Hall 110 Design Studio",
-    communicationLink: "https://jhu.zoom.us/j/98712345678",
-    platformName: "Zoom",
     description:
       "Brainstorming medical device prototypes, iterating on CAD models, and writing clinical needs assessment reports.",
     studyGoals: ["Project Collaboration", "Midterm & Final Prep"],

@@ -49,8 +49,8 @@ export interface StudyGroup {
   meetingTime: string; // e.g. "18:00 - 20:00"
   weeklyFrequency: "Once a week" | "Twice a week" | "Three times a week" | "Bi-weekly";
   preferredLocation: string;
-  communicationLink: string;
-  platformName: PlatformType;
+
+
   description: string;
   studyGoals: string[];
   maxMembers: number;
@@ -92,3 +92,17 @@ export interface CampusRoom {
   imageUrl?: string;
 }
 
+export interface RoomBooking {
+  id: string;
+  roomId: string;
+  roomName: string;
+  building: string;
+  bookedBy: string;
+  groupId?: string;
+  groupTitle?: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  purpose: string;
+  createdAt: string;
+}

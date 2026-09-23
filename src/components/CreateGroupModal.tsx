@@ -1,7 +1,7 @@
 "use client";
 
 import { JHU_FALL_2026_COURSES } from "@/data/jhuFall2026Courses";
-import { PlatformType, StudentProfile, StudyGroup } from "@/types";
+import { StudentProfile, StudyGroup } from "@/types";
 import {
   Calendar,
   Clock,
@@ -77,8 +77,6 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
   const [preferredLocation, setPreferredLocation] = useState(
     JHU_CAMPUS_LOCATIONS[0]
   );
-  const [communicationLink, setCommunicationLink] = useState("");
-  const [platformName, setPlatformName] = useState<PlatformType>("Discord");
   const [description, setDescription] = useState("");
   const [selectedGoals, setSelectedGoals] = useState<string[]>([
     "Weekly Problem Sets",
@@ -124,12 +122,6 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
   const validate = () => {
     const newErrors: Record<string, string> = {};
     if (!title.trim()) newErrors.title = "Group title is required";
-    if (!communicationLink.trim()) {
-      newErrors.communicationLink = "Communication link is required";
-    } else if (!/^https?:\/\//i.test(communicationLink.trim())) {
-      newErrors.communicationLink =
-        "Must be a valid URL starting with http:// or https://";
-    }
     if (meetingDays.length === 0) {
       newErrors.meetingDays = "Select at least one meeting day";
     }
@@ -156,13 +148,9 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
       meetingTime: `${startTime} - ${endTime}`,
       weeklyFrequency,
       preferredLocation,
-      communicationLink: communicationLink.trim(),
-      platformName,
       description:
         description.trim() ||
-        `Study group for ${selectedCourseCode} meeting weekly on ${meetingDays.join(
-          ", "
-        )}.`,
+        `Study group for ${selectedCourseCode} meeting weekly on ${meetingDays.join(", ")}.`,
       studyGoals:
         selectedGoals.length > 0 ? selectedGoals : ["Weekly Problem Sets"],
       maxMembers: Number(maxMembers),
@@ -219,7 +207,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
           {/* Section 1: Course & Instructor */}
           <div className="space-y-4">
             <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-jhu-heritage"></span>
+              <span className="w-2 h-2 rounded-full bg-jhu-heritage" />
               Course & Academic Details (Fall 2026)
             </h3>
 
@@ -295,7 +283,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
           {/* Section 2: Meeting Timings & Room Location */}
           <div className="space-y-4 pt-3 border-t border-slate-200">
             <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+              <span className="w-2 h-2 rounded-full bg-blue-500" />
               Meeting Schedule & Meeting Room Location
             </h3>
 
@@ -413,73 +401,10 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
             </div>
           </div>
 
-          {/* Section 4: Gated Communication Link */}
-          <div className="space-y-4 pt-3 border-t border-slate-200">
-            <div className="flex items-start justify-between">
-              <div>
-                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                  Gated Communication Link (1 Link) *
-                </h3>
-                <p className="text-[11px] text-slate-500 mt-0.5">
-                  Protected: This link is revealed strictly AFTER a student joins your group.
-                </p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                  Platform
-                </label>
-                <select
-                  value={platformName}
-                  onChange={(e) =>
-                    setPlatformName(e.target.value as PlatformType)
-                  }
-                  className="w-full px-3.5 py-2 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-jhu-heritage/20 focus:border-jhu-heritage"
-                >
-                  <option value="Discord">Discord Server</option>
-                  <option value="GroupMe">GroupMe Chat</option>
-                  <option value="WhatsApp">WhatsApp Group</option>
-                  <option value="Slack">Slack Workspace</option>
-                  <option value="Zoom">Zoom Meeting Room</option>
-                  <option value="Google Meet">Google Meet</option>
-                  <option value="Other">Other Link</option>
-                </select>
-              </div>
-
-              <div className="sm:col-span-2">
-                <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                  Invite URL *
-                </label>
-                <div className="relative">
-                  <LinkIcon className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="url"
-                    placeholder="https://discord.gg/... or https://groupme.com/..."
-                    value={communicationLink}
-                    onChange={(e) => setCommunicationLink(e.target.value)}
-                    className={`w-full pl-10 pr-3.5 py-2 bg-white border rounded-xl text-sm focus:ring-2 focus:ring-jhu-heritage/20 focus:border-jhu-heritage ${
-                      errors.communicationLink
-                        ? "border-rose-400 bg-rose-50/30"
-                        : "border-slate-300"
-                    }`}
-                  />
-                </div>
-                {errors.communicationLink && (
-                  <p className="text-[11px] text-rose-500 mt-1">
-                    {errors.communicationLink}
-                  </p>
-                )}
-              </div>
-            </div>
-          </div>
-
           {/* Section 5: Study Goals & Description */}
           <div className="space-y-4 pt-3 border-t border-slate-200">
             <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-slate-400"></span>
+              <span className="w-2 h-2 rounded-full bg-slate-400" />
               Group Focus & Description
             </h3>
 

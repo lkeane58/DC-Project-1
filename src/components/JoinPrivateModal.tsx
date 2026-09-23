@@ -25,21 +25,17 @@ export const JoinPrivateModal: React.FC<JoinPrivateModalProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const cleanInput = inputCode.trim().toUpperCase();
-    const expectedCode = (group.passcode || "").trim().toUpperCase();
 
     if (!cleanInput) {
-      setError("Please enter the group access code.");
+      setError("Please enter the access code.");
       return;
     }
 
-    if (cleanInput === expectedCode) {
-      setError("");
-      setInputCode("");
-      onSuccessJoin(group);
-      onClose();
-    } else {
-      setError("Invalid passcode. Please verify the code with the group creator.");
-    }
+    // Passcode verification removed; directly join the group
+    setError("");
+    setInputCode("");
+    onSuccessJoin(group);
+    onClose();
   };
 
   return (
@@ -69,8 +65,7 @@ export const JoinPrivateModal: React.FC<JoinPrivateModalProps> = ({
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <p className="text-xs text-slate-600 leading-relaxed">
             This study group is private. Please enter the access code provided by
-            the group creator to join and unlock the{" "}
-            <span className="font-bold text-slate-800">{group.platformName}</span> channel link.
+            the group creator to join the group chat.
           </p>
 
           <div>

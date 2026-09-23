@@ -5,8 +5,6 @@ import {
   Calendar,
   CheckCircle2,
   Clock,
-  Copy,
-  ExternalLink,
   Lock,
   LogOut,
   MapPin,
@@ -15,7 +13,8 @@ import {
   Unlock,
   UserPlus,
 } from "lucide-react";
-import React, { useState } from "react";
+import React from "react";
+import { useRouter } from "next/navigation";
 
 interface StudyGroupCardProps {
   group: StudyGroup;
@@ -32,7 +31,7 @@ export const StudyGroupCard: React.FC<StudyGroupCardProps> = ({
   onJoinPublic,
   onLeaveGroup,
 }) => {
-  const [copiedLink, setCopiedLink] = useState(false);
+  const router = useRouter();
 
   const isMember = group.members.some(
     (m) => m.email === currentStudent.email || m.jhed === currentStudent.jhed
@@ -40,12 +39,6 @@ export const StudyGroupCard: React.FC<StudyGroupCardProps> = ({
   const isCreator = group.createdBy === currentStudent.email;
   const isFull = group.members.length >= group.maxMembers;
   const spotsLeft = group.maxMembers - group.members.length;
-
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(group.communicationLink);
-    setCopiedLink(true);
-    setTimeout(() => setCopiedLink(false), 2000);
-  };
 
   const getScoreColor = (score: number) => {
     if (score >= 80) return "from-emerald-600 to-teal-500 text-white";
@@ -71,7 +64,6 @@ export const StudyGroupCard: React.FC<StudyGroupCardProps> = ({
             <span className="font-mono text-xs font-bold px-2.5 py-1 rounded-md bg-jhu-heritage text-white shadow-xs">
               {group.courseCode}
             </span>
-
             {isMember && (
               <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 border border-emerald-300">
                 <CheckCircle2 className="w-3 h-3 text-emerald-600" />
@@ -79,7 +71,6 @@ export const StudyGroupCard: React.FC<StudyGroupCardProps> = ({
               </span>
             )}
           </div>
-
           {/* Match Score Badge */}
           {matchResult && (
             <div
@@ -93,7 +84,6 @@ export const StudyGroupCard: React.FC<StudyGroupCardProps> = ({
             </div>
           )}
         </div>
-
         {/* Group Title & Course Name */}
         <h3 className="font-bold text-slate-900 text-lg leading-snug tracking-tight mb-1">
           {group.title}
@@ -101,7 +91,6 @@ export const StudyGroupCard: React.FC<StudyGroupCardProps> = ({
         <p className="text-xs font-medium text-slate-500 mb-2.5">
           {group.courseTitle}
         </p>
-
         {/* Section & Instructor Badge */}
         <div className="bg-slate-50 rounded-lg p-2.5 border border-slate-100 flex items-center justify-between text-xs mb-3">
           <div className="flex items-center space-x-2">
@@ -114,8 +103,7 @@ export const StudyGroupCard: React.FC<StudyGroupCardProps> = ({
             Sec {group.section || "01"}
           </span>
         </div>
-
-        {/* Match Reason Pills (if available) */}
+        {/* Match Reason Pills */}
         {matchResult && matchResult.matchReasons.length > 0 && (
           <div className="flex flex-wrap gap-1 mb-3">
             {matchResult.matchReasons.slice(0, 3).map((reason, idx) => (
@@ -128,12 +116,10 @@ export const StudyGroupCard: React.FC<StudyGroupCardProps> = ({
             ))}
           </div>
         )}
-
         {/* Description */}
         <p className="text-xs text-slate-600 leading-relaxed line-clamp-2 mb-3.5">
           {group.description}
         </p>
-
         {/* Study Goals Tags */}
         <div className="flex flex-wrap gap-1.5 mb-4">
           {group.studyGoals.map((goal) => (
@@ -145,7 +131,6 @@ export const StudyGroupCard: React.FC<StudyGroupCardProps> = ({
             </span>
           ))}
         </div>
-
         {/* Meeting Specs */}
         <div className="space-y-1.5 text-xs text-slate-600 border-t border-slate-100 pt-3 mb-4">
           <div className="flex items-center space-x-2">
@@ -156,12 +141,10 @@ export const StudyGroupCard: React.FC<StudyGroupCardProps> = ({
             <span className="text-slate-400">•</span>
             <span className="text-slate-500">{group.weeklyFrequency}</span>
           </div>
-
           <div className="flex items-center space-x-2">
             <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
             <span className="text-slate-700 font-medium">{group.meetingTime}</span>
           </div>
-
           <div className="flex items-center space-x-2">
             <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
             <span className="text-slate-700 truncate">
@@ -169,7 +152,6 @@ export const StudyGroupCard: React.FC<StudyGroupCardProps> = ({
             </span>
           </div>
         </div>
-
         {/* Members Roster & Spots */}
         <div className="flex items-center justify-between pt-2 border-t border-slate-100">
           <div className="flex items-center space-x-2">
@@ -188,7 +170,6 @@ export const StudyGroupCard: React.FC<StudyGroupCardProps> = ({
               {group.members.length} / {group.maxMembers} members
             </span>
           </div>
-
           <span
             className={`text-[11px] font-bold px-2 py-0.5 rounded ${
               isFull
@@ -203,54 +184,28 @@ export const StudyGroupCard: React.FC<StudyGroupCardProps> = ({
         </div>
       </div>
 
-      {/* GATED COMMUNICATION LINK AREA & ACTIONS */}
+      {/* Chat & Actions Area */}
       <div className="p-4 bg-slate-50 border-t border-slate-200">
         {isMember ? (
-          /* ================= UNLOCKED STATE (MEMBER) ================= */
           <div className="space-y-3">
             <div className="bg-emerald-50/80 border border-emerald-200 rounded-xl p-3">
               <div className="flex items-center justify-between mb-1.5">
                 <div className="flex items-center space-x-1.5 text-xs font-bold text-emerald-900">
                   <Unlock className="w-4 h-4 text-emerald-600" />
-                  <span>Unlocked Study Group Channel</span>
+                  <span>Group Chat</span>
                 </div>
-                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-200 text-emerald-900">
-                  {group.platformName}
-                </span>
               </div>
-
               <p className="text-[11px] text-emerald-700 mb-2.5">
-                You are a member! Connect with your study partners:
+                Connect with your study partners:
               </p>
-
-              <div className="flex items-center gap-2">
-                <a
-                  href={group.communicationLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-1 inline-flex items-center justify-center space-x-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-3 rounded-lg text-xs shadow-xs transition-colors"
-                >
-                  <MessageSquare className="w-3.5 h-3.5" />
-                  <span>Launch {group.platformName}</span>
-                  <ExternalLink className="w-3 h-3 ml-0.5 opacity-70" />
-                </a>
-
-                <button
-                  onClick={handleCopyLink}
-                  className="p-2 bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 rounded-lg text-xs transition-colors"
-                  title="Copy Channel Invite Link"
-                >
-                  {copiedLink ? (
-                    <span className="text-[11px] font-bold text-emerald-700">
-                      Copied!
-                    </span>
-                  ) : (
-                    <Copy className="w-3.5 h-3.5" />
-                  )}
-                </button>
-              </div>
+              <button
+                onClick={() => router.push(`/group/${group.id}/chat`)}
+                className="flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-3 rounded-lg text-xs shadow-xs transition-colors"
+              >
+                <MessageSquare className="w-3.5 h-3.5" />
+                Open Chat
+              </button>
             </div>
-
             {/* Leave Group Action */}
             <div className="flex justify-end">
               <button
@@ -263,19 +218,16 @@ export const StudyGroupCard: React.FC<StudyGroupCardProps> = ({
             </div>
           </div>
         ) : (
-          /* ================= LOCKED STATE (NON-MEMBER) ================= */
           <div className="space-y-3">
             <div className="bg-slate-100/90 border border-slate-200 rounded-xl p-3 text-center">
               <div className="flex items-center justify-center space-x-1.5 text-xs font-semibold text-slate-700 mb-1">
                 <Lock className="w-3.5 h-3.5 text-slate-500" />
-                <span>Communication Link Hidden</span>
+                <span>Chat Hidden</span>
               </div>
               <p className="text-[11px] text-slate-500">
-                The {group.platformName} channel invite link is revealed once
-                you join this study group.
+                Join the group to access the internal chat.
               </p>
             </div>
-
             {/* 1-Click Join Button */}
             <button
               onClick={() => onJoinPublic(group)}
@@ -287,9 +239,7 @@ export const StudyGroupCard: React.FC<StudyGroupCardProps> = ({
               }`}
             >
               <UserPlus className="w-3.5 h-3.5 text-jhu-spirit" />
-              <span>
-                {isFull ? "Group is Full" : "Join Study Group (Reveal Link)"}
-              </span>
+              <span>{isFull ? "Group is Full" : "Join Study Group"}</span>
             </button>
           </div>
         )}
@@ -297,4 +247,3 @@ export const StudyGroupCard: React.FC<StudyGroupCardProps> = ({
     </div>
   );
 };
-

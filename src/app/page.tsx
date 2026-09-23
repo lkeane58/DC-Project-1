@@ -7,13 +7,14 @@ import { StudentProfileModal } from "@/components/StudentProfileModal";
 import { StudyGroupCard } from "@/components/StudyGroupCard";
 import { rankStudyGroups } from "@/lib/matching";
 import { getStoredGroups, getStoredProfile, saveGroups, saveProfile } from "@/lib/storage";
-import { StudentProfile, StudyGroup } from "@/types";
+import { StudentProfile, StudyGroup, GroupMember } from "@/types";
 import { AlertCircle, BookOpen, Calendar, Compass, Filter, GraduationCap, PlusCircle, Search, Sparkles, Users } from "lucide-react";
 import React, { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
-  const [activeTab, setActiveTab] = useState<"match" | "explore" | "my-groups">("match");
+  const [activeTab, setActiveTab] = useState<"match" | "explore" | "my-groups" | "rooms">("match");
 
   // Main state
   const [student, setStudent] = useState<StudentProfile>(getStoredProfile());
@@ -67,38 +68,48 @@ export default function Home() {
     showNotification("Student profile & schedule preferences updated!");
   };
 
-  // Join a public group (1-click)
-  const handleJoinPublic = (group: StudyGroup) => {
-    if (group.members.some((m) => m.email === student.email)) return;
-    if (group.members.length >= group.maxMembers) {
-      showNotification("This study group is already at full capacity.");
-      return;
-    }
+// Removed duplicate import of useRouter (handled at top)
+  const router = useRouter();
 
-    const updatedMembers = [
-      ...group.members,
-      {
-        id: student.id,
-        name: student.name,
-        email: student.email,
-        jhed: student.jhed,
-        avatar:
-          "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=faces",
-        role: "member" as const,
-        joinedAt: new Date().toISOString(),
-      },
-    ];
-
-    const updatedGroups = groups.map((g) =>
-      g.id === group.id ? { ...g, members: updatedMembers } : g
-    );
-
-    setGroups(updatedGroups);
-    saveGroups(updatedGroups);
+  // Update handleGroupCreated notification to reflect internal chat
+  const handleGroupCreated = (newGroup: StudyGroup) => {
+    const updated = [newGroup, ...groups];
+    setGroups(updated);
+    saveGroups(updated);
     showNotification(
-      `Joined "${group.title}"! The ${group.platformName} communication link is now unlocked.`
+      `Created study group for ${newGroup.courseCode}! You can now access the group chat.`
     );
   };
+
+const handleJoinPublic = (group: StudyGroup) => {
+  // Add current student to group if not already a member
+  const alreadyMember = group.members.some(
+    (m) => m.email === student.email && m.jhed === student.jhed
+  );
+  // Build a new GroupMember object with required fields
+  const newMember: GroupMember = {
+    id: Date.now().toString(),
+    name: student.name,
+    email: student.email,
+    jhed: student.jhed,
+    avatar: "",
+    role: "member",
+    joinedAt: new Date().toISOString(),
+  };
+  const updatedMembers = alreadyMember
+    ? group.members
+    : [...group.members, newMember];
+
+  const updatedGroups = groups.map((g) =>
+    g.id === group.id ? { ...g, members: updatedMembers } : g
+  );
+
+  setGroups(updatedGroups);
+  saveGroups(updatedGroups);
+  showNotification(`Joined "${group.title}"! Chat is now available.`);
+  // Navigate to the internal chat page
+  router.push(`/group/${group.id}/chat`);
+};
 
   // Leave a study group
   const handleLeaveGroup = (groupId: string) => {
@@ -116,15 +127,7 @@ export default function Home() {
     showNotification("You have left the study group.");
   };
 
-  // Add a newly created group
-  const handleGroupCreated = (newGroup: StudyGroup) => {
-    const updated = [newGroup, ...groups];
-    setGroups(updated);
-    saveGroups(updated);
-    showNotification(
-      `Created study group for ${newGroup.courseCode}! Your communication link is live.`
-    );
-  };
+// Removed duplicate handleGroupCreated; the earlier definition (lines 71-82) handles group creation with updated notification.
 
   // Groups student has joined
   const myGroups = useMemo(() => {
